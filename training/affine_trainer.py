@@ -11,6 +11,7 @@ import sys
 import matplotlib.pyplot as plt
 from numpy import linalg as LA
 sys.path.append('model/')
+sys.path.append('../model/')
 from networks import *
 from train_utils import *
 from tqdm import tqdm
@@ -24,7 +25,7 @@ parser.add_argument('--name', type=str, help='model name', default='model')
 parser.add_argument('--batch_size', type=int, default=100)
 parser.add_argument('--viz', action='store_true',
                     help='visualize the process')
-parser.add_argument('--epochs', type=int, default=100)
+parser.add_argument('--epochs', type=int, default=200)
 parser.add_argument('--val_feq', type=int, default=4,
                     help='number of times to validate per epoch')
 parser.add_argument('--dump_dir', type=str, default='../saved/logs',
@@ -263,7 +264,7 @@ if __name__ == "__main__":
     N = len(train_x)
     for epoch in range(EPOCHS):
         # dont show tqdm on floydhub
-        if config["mode"]!="floyd":
+        if config.get("mode")!="floyd":
             pbar = tqdm(range(0, N, BATCH_SIZE))
         else:
             pbar = range(0, N, BATCH_SIZE)
@@ -319,11 +320,11 @@ if __name__ == "__main__":
                                                         val_loss.numpy(),
                                                         train_metrics_mean[0],
                                                         val_metrics_mean[0])
-                if config["mode"]!="floyd":
+                if  config.get("mode")!="floyd":
                     pbar.set_description(desc)
                     pbar.refresh()
 
-        if config["mode"]=="floyd":
+        if  config.get("mode")=="floyd":
             print_metrics(train_metrics_mean, val_metrics_mean, epoch, lr)
 
         lr_scheduler.step()
