@@ -40,9 +40,11 @@ parser.add_argument('--record', action='store_true',
                     help='save figure at every iteration')
 args = parser.parse_args()
 
-now = datetime.now().strftime("%m%d-%H-%M-%S%f")
+now = datetime.now().strftime("%m%d-%H-%M-%S")
 EPOCHS = args.epochs
-MODEL_NAME = args.name + "-{}".format(now)
+# Uncomment if you want time stamps for model names
+#MODEL_NAME = args.name + "-{}".format(now)
+MODEL_NAME = args.name + "-{}"
 BATCH_SIZE = args.batch_size
 VAL_FEQ = args.val_feq
 DUMP_DIR = args.dump_dir

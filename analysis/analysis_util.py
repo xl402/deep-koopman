@@ -109,13 +109,14 @@ def plot_mse_mad(models, model_labels, x_true, n_shifts, t_end):
     return x, mses, mads, mqts
 
 
-def plot_trajectories(model, n_shifts, x_true):
+def plot_trajectories(model, n_shifts, x_true, setlim=None):
     """
     Plot trajectory and phase plots for ground truth and prediction
     Args:
         model: (NN) trained network
         model_config: (dict) model configuration dictionary
         x_true: (ndarray) ground truth
+        setlim: (float) axis limit (auto if left none)
     """
     plt.rcParams.update({'font.size': 15})
     fig, ax = plt.subplots(1, 3, figsize=(18, 4), facecolor='white', dpi=100)
@@ -150,7 +151,11 @@ def plot_trajectories(model, n_shifts, x_true):
         ax[1].set_ylabel(r'$\omega$')
         ax[1].set_title(r'$\omega$ Trajectory', pad=20)
 
-
+    if setlim is not None:
+        ax[0].set_ylim([setlim, -setlim])
+        ax[1].set_ylim([setlim, -setlim])
+        ax[2].set_ylim([setlim, -setlim])
+        ax[2].set_xlim([setlim, -setlim])
     for i in range(3):
         ax[i].spines['top'].set_visible(False)
         ax[i].spines['right'].set_visible(False)
