@@ -29,12 +29,13 @@ class Encoder(nn.Module):
 
         name:   (str) encoder name
     """
-    def __init__(self, params, name='encoder'):
+    def __init__(self, params, name='encoder', activation='relu'):
         super().__init__()
         self.params = params
         self.shape = params['shape']
         self.dim = self.shape[0]
         self.drop_prob = params.get('drop_prob') or 0.
+        self.activation = activation
 
         self.dropout = nn.Dropout(p=self.drop_prob)
 
@@ -69,7 +70,10 @@ class Encoder(nn.Module):
 
         for idx, layer in enumerate(self.aux_layers):
             if idx <= len(self.aux_layers)-2:
-                x = F.relu(layer(x))
+                if self.activation == 'sigmoid':
+                    x = torch.sigmoid(layer(x))
+                else:
+                    x = F.relu(layer(x))
             else:
                 # only do dropout on the last layer
                 x = self.dropout(layer(x))
@@ -364,7 +368,7 @@ class DEINA(nn.Module):
         super().__init__()
         self.params = params
 
-        self.enc_x_shape = params['enc_x_shape']
+        self.enc_x_shape = params['enc_shape']
         self.use_enc_u = params['use_enc_u'] or False
 
         self.dim = self.enc_x_shape[0]
@@ -384,10 +388,10 @@ class DEINA(nn.Module):
         else:
             self.B = nn.Linear(self.dim, self.ldim, bias=False)
 
-        self.koopman = nn.Linear(self.ldim, self.ldim)
+        self.koopman = nn.Linear(self.ldim, self.ldim, bias=False)
 
 
-    def forward(self, x, u):
+    def forward(self, x, u, return_ko=False):
 
         # generate latent ground truth
         x = x[:, :self.params['n_shifts'], :]
@@ -407,5 +411,10 @@ class DEINA(nn.Module):
             add = Bu[:, i, :].unsqueeze_(1)
             y_next = self.koopman(y_pred[:, -1:, :]) + add
             y_pred = torch.cat((y_pred, y_next), dim=1)
-
-        return y, y_pred
+            
+        if return_ko:
+            koopman = self.koopman.parameters()
+            koopman = torch.Tensor(list(koopman)[0])
+            return y, y_pred, koopman.detach()
+        else:
+            return y, y_pred

@@ -17,9 +17,9 @@ from train_utils import *
 from tqdm import tqdm
 
 
-name2model = {"lren": LREN, "denis": DENIS, "denis_jbf": DENIS_JBF}
+name2model = {"lren": LREN, "denis": DENIS, "denis_jbf": DENIS_JBF, "deina": DEINA}
 
-parser = argparse.ArgumentParser("DKoopman", description = 'Training Affine Models')
+parser = argparse.ArgumentParser("DKoopman", description = 'Training Models')
 parser.add_argument('--config_dir', type=str, help='config file directory')
 parser.add_argument('--name', type=str, help='model name', default='model')
 parser.add_argument('--batch_size', type=int, default=100)
@@ -42,9 +42,9 @@ args = parser.parse_args()
 
 now = datetime.now().strftime("%m%d-%H-%M-%S")
 EPOCHS = args.epochs
-# Uncomment if you want time stamps for model names
+#Uncomment if you want time stamps for model names
 #MODEL_NAME = args.name + "-{}".format(now)
-MODEL_NAME = args.name + "-{}"
+MODEL_NAME = args.name
 BATCH_SIZE = args.batch_size
 VAL_FEQ = args.val_feq
 DUMP_DIR = args.dump_dir
@@ -115,10 +115,12 @@ def visualize(model, data, iter):
         df = pd.read_csv(SUMMARY_DIR)
         df = df[df['model_name']==MODEL_NAME]
         with torch.no_grad():
-            outputs = model.forward(data, return_ko=True)
+            outputs = model.forward(*data, return_ko=True)
+
         xy_gt, xy_pred, kos = outputs
         xy_gt, xy_pred = xy_gt.numpy(), xy_pred.numpy()
         kos = kos.numpy()
+        #import pdb; pdb.set_trace()
 
         random = args.random
 
@@ -220,7 +222,10 @@ def visualize(model, data, iter):
         ax_lr.set_xlabel('Iterations')
 
         idx = np.random.randint(len(xy_gt)) if random else 1
-        w, v = LA.eig(kos[idx])
+        if len(kos.shape)==3:
+            w, v = LA.eig(kos[idx])
+        else:
+            w, v = LA.eig(kos)
         ax_ko.cla()
         ax_ko.scatter(np.real(w), np.imag(w), marker='+', color='g', s=30)
         ax_ko.set_title('Koopman Eigenvalues')
@@ -242,8 +247,14 @@ def visualize(model, data, iter):
 if __name__ == "__main__":
     with open(args.config_dir, 'r') as fp:
         config = json.load(fp)
+    AFFINE_FLAG = True
+    if config['network'] in ['deina', 'deina-ode']:
+        AFFINE_FLAG = False
+    if AFFINE_FLAG:
+        model_config = affine_model_configurer(config)
+    else:
+        model_config = non_affine_model_configurer(config)
 
-    model_config = affine_model_configurer(config)
     model = name2model[config["network"]](model_config)
     if args.load_weights is not None:
         model.load_state_dict(torch.load(args.load_weights))
@@ -254,7 +265,6 @@ if __name__ == "__main__":
         print(count_parameters(model))
         print("\n")
 
-
     optimizer = optim.Adam(model.parameters(), config['lr'])
     lr_scheduler = get_lr_scheduler(optimizer, config)
 
@@ -262,6 +272,12 @@ if __name__ == "__main__":
     val_x = torch.Tensor(np.load(config['val_data']))
     train_x = train_x.to(DEVICE)
     val_x = val_x.to(DEVICE)
+
+    if not AFFINE_FLAG:
+        train_u = torch.Tensor(np.load(config['train_data_inputs']))
+        val_u = torch.Tensor(np.load(config['val_data_inputs']))
+        train_u = train_u.to(DEVICE)
+        val_u = val_u.to(DEVICE)
 
     N = len(train_x)
     for epoch in range(EPOCHS):
@@ -280,10 +296,19 @@ if __name__ == "__main__":
             model.zero_grad()
             indices = permutation[i:i+BATCH_SIZE]
             batch_x = train_x[indices]
+            if not AFFINE_FLAG:
+                batch_u = train_u[indices]
+
             if config['zero_loss'] != 0.:
                 batch_x = zero_pad(batch_x)
+                if not AFFINE_FLAG:
+                    batch_u = zero_pad(batch_u)
 
-            outputs = model(batch_x)
+            if AFFINE_FLAG:
+                outputs = model(batch_x)
+            else:
+                outputs = model(batch_x, batch_u)
+
             loss, loss_array = koopman_loss(*outputs, config, model)
             train_metrics_mean.append(loss_array)
             train_loss_mean.append(loss.detach().numpy())
@@ -299,13 +324,23 @@ if __name__ == "__main__":
                     # batching validation set
                     for j in range(0, len(val_x), BATCH_SIZE):
                         batch_val = val_x[j: j+BATCH_SIZE]
+                        if not AFFINE_FLAG:
+                            batch_val_u = val_u[j: j+BATCH_SIZE]
+
                         if config['zero_loss'] != 0.:
                             batch_val = zero_pad(batch_val)
-                        val_outputs = model(batch_val)
+                            if not AFFINE_FLAG:
+                                batch_val_u = zero_pad(batch_val_u)
+                        if AFFINE_FLAG:
+                            val_outputs = model(batch_val)
+                        else:
+                            val_outputs = model(batch_val, batch_val_u)
+
                         val_loss, val_loss_array = koopman_loss(*val_outputs,
                                                                 config, model)
                         val_metrics_mean.append(val_loss_array)
                         val_loss_mean.append(val_loss.numpy())
+                        
                 # average loss components across validation batches
                 train_metrics_mean = np.mean(np.array(train_metrics_mean), axis=0)
                 val_metrics_mean = np.mean(np.array(val_metrics_mean), axis=0)
@@ -314,7 +349,10 @@ if __name__ == "__main__":
                 lr = lr_scheduler.get_lr()[0]
                 summary_writer(train_metrics_mean, val_metrics_mean, lr)
                 save_model(val_metrics_mean[0])
-                visualize(model, batch_val, epoch)
+                if AFFINE_FLAG:
+                    visualize(model, batch_val, epoch)
+                else:
+                    visualize(model, [batch_val, batch_val_u], epoch)
 
                 # update progress bar
                 desc = "loss: {:.4f}/{:.4f}, state_mse: {:.4f}/{:.4f}".format(

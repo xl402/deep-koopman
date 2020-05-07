@@ -27,6 +27,13 @@ def affine_model_configurer(config):
          "aux_rbf": config.get("aux_rbf")}
     return model_config
 
+def non_affine_model_configurer(config):
+    model_config = {"enc_shape": config["enc_shape"], "enc_u_shape": config.get("enc_u_shape"),
+         "n_shifts": config["n_shifts"], "dt": config.get("dt"),
+         "use_rbf": config.get("use_rbf"), "drop_prob": config.get("drop_prob"),
+         "enc_rbf": config.get("enc_rbf"), "use_enc_u": config.get("use_enc_u")}
+    return model_config
+
 
 def get_lr_scheduler(optimizer, config):
     step = config.get('lr_sch_step') or 1000
@@ -80,7 +87,7 @@ def koopman_loss(xy, xy_pred, config, model):
               reg_loss.detach().numpy()])
     return loss, r_arry.astype(np.double())
 
-
+# used for Floydhub
 def print_metrics(train_metrics_mean, val_metrics_mean, epoch, lr):
     print('{{"metric": "Train Loss", "value": {}, "epoch": {}}}'.format(
         train_metrics_mean[0], epoch))

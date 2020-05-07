@@ -11,6 +11,7 @@ def pend_dynamics(model):
         x0 = x0.reshape((1, 1, 2))
         x_goal = x_goal.reshape((1, 1, 2))
         y = model.encode(x0-x_goal)[0].T
+        
         u = (K@y)[0, 0]
         us.append(u)
         ts.append(t)
@@ -49,8 +50,9 @@ class KOOC():
         else:
             self.B = B
 
-    @staticmethod
-    def d2c(dim, A, B, dt):
+    def d2c(self, dim, A):
+        B = self.B
+        dt = self.dt
         ldim = len(A)-dim
         u_dim = B.shape[1]
         B_hat = np.append(B, np.zeros((1, ldim)))[:, np.newaxis]
@@ -59,6 +61,7 @@ class KOOC():
         sys = harold.undiscretize(G, 'tustin')
         A_c = sys.a
         return A_c, B_hat
+    
 
     def simulate(self, init_conds, x_goal, T, Q=1, r=1, show=True):
         """Simulate closed loop dynamics
@@ -89,7 +92,7 @@ class KOOC():
             x0 = init_conds[i]
             ko = kos[i]
             A = ko.T
-            A_c, B_hat = self.d2c(dim, A, self.B, self.dt)
+            A_c, B_hat = self.d2c(dim, A)
             if np.isscalar(Q):
                 Q = Q * np.eye(dim)
             else:
