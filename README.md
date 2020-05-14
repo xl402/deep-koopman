@@ -5,7 +5,7 @@
 The Koopman operator framework is becoming increasingly popular for obtaining linear representations of nonlinear systems from data. This project aims to **optimally control input non-affine nonlinear systems**, utilizing Deep Learning (DL) to discover the Koopman invariant subspace, bridging the gap between **DL based Koopman eigenfunction discovery and optimal predictive control.**
 
 ## Networks Overview:
-Script `networks.py` contains all networks discussed in the thesis, including:
+Script `models/networks.py` contains all networks discussed in the thesis, including:
 - **LREN**: **L**inearly **R**ecurrent **E**ncoder **N**etwork
 - **DENIS**: **D**eep **E**ncoder with **I**nitial **S**tate Parameterisation
 - **DEINA**: **D**eep **E**ncoder for **I**nput **N**on-**A**ffine systems
