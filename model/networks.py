@@ -108,25 +108,37 @@ class LREN(nn.Module):
                             enc_shape[-1]+self.dim,
                             bias=False)
 
-    def forward(self, x, return_ko=False):
+    def forward(self, x, n_shifts=None, return_ko=False):
+        if n_shifts==None:
+            n_shifts = self.params['n_shifts']
+
         # generate ground truth
-        x = x[:, :self.params['n_shifts'], :]
+        x = x[:, :n_shifts, :]
         y = self.encoder(x)
         # append observable state
         y = torch.cat((x, y), dim=-1)
 
         # generate trajectories from initial state
         y_pred = y[:, 0:1, :].clone()
-        for i in range(self.params['n_shifts']-1):
+        for i in range(n_shifts-1):
             y_next = self.koopman(y_pred[:, -1:, :])
             y_pred = torch.cat((y_pred, y_next), axis=1)
 
         if return_ko:
             koopman = self.koopman.parameters()
-            koopman = torch.Tensor(list(koopman)[0])
+            koopman = torch.Tensor(list(koopman)[0]).detach().numpy()
             return y, y_pred, koopman
         else:
             return y, y_pred
+
+    def predict(self, x, n_shifts, return_ko=False):
+        if not torch.is_tensor(x):
+            x = torch.tensor(x, dtype=torch.float32)
+        y, y_pred, koopman = self.forward(x, n_shifts, True)
+        x_pred = y_pred.detach().numpy()[:, :, :2]
+        if return_ko:
+            return x_pred, koopman
+        return x_pred
 
 
 class DENIS(nn.Module):
@@ -411,7 +423,7 @@ class DEINA(nn.Module):
             add = Bu[:, i, :].unsqueeze_(1)
             y_next = self.koopman(y_pred[:, -1:, :]) + add
             y_pred = torch.cat((y_pred, y_next), dim=1)
-            
+
         if return_ko:
             koopman = self.koopman.parameters()
             koopman = torch.Tensor(list(koopman)[0])

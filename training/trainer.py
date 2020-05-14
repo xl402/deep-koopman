@@ -114,22 +114,26 @@ def visualize(model, data, iter):
     if args.viz:
         df = pd.read_csv(SUMMARY_DIR)
         df = df[df['model_name']==MODEL_NAME]
+        #import pdb; pdb.set_trace()
         with torch.no_grad():
-            outputs = model.forward(*data, return_ko=True)
+            try:
+                outputs = model.forward(*data, return_ko=True)
+            except:
+                outputs = model.forward(data, return_ko=True)
 
         xy_gt, xy_pred, kos = outputs
         xy_gt, xy_pred = xy_gt.numpy(), xy_pred.numpy()
-        kos = kos.numpy()
+        kos = kos
         #import pdb; pdb.set_trace()
 
         random = args.random
 
         idx = np.random.randint(len(xy_gt)) if random else 1
         ax_traj.cla()
-        ax_traj.plot(xy_gt[idx, :, 0], '--', color='r', linewidth=2, alpha=0.5)
-        ax_traj.plot(xy_pred[idx, :, 0], color='r', linewidth=2)
-        ax_traj.plot(xy_gt[idx, :, 1], '--', color='g', linewidth=2, alpha=0.5)
-        ax_traj.plot(xy_pred[idx, :, 1], color='g', linewidth=2)
+        ax_traj.plot(xy_gt[idx, :, 0], '--', color='purple', linewidth=2, alpha=0.5)
+        ax_traj.plot(xy_pred[idx, :, 0], color='purple', linewidth=2)
+        ax_traj.plot(xy_gt[idx, :, 1], '--', color='grey', linewidth=2, alpha=0.5)
+        ax_traj.plot(xy_pred[idx, :, 1], color='grey', linewidth=2)
         ax_traj.set_ylim(np.min(xy_gt)*1.1, np.max(xy_gt)*1.1)
         ax_traj.set_title('Trajectories')
         ax_traj.set_xlabel('Time Steps')
@@ -138,9 +142,9 @@ def visualize(model, data, iter):
         ax_phase.cla()
         idicies = np.random.randint(len(xy_gt), size=10) if random else range(10)
         for i in idicies:
-            ax_phase.plot(xy_gt[i, :, 0], xy_gt[i, :, 1], '--', color='r', linewidth=2, alpha=0.5)
-            ax_phase.plot(xy_pred[i, :, 0], xy_pred[i, :, 1], color='g', linewidth=2)
-            ax_phase.scatter(xy_gt[i, 0, 0], xy_gt[i, 0, 1], color='g', s=15)
+            ax_phase.plot(xy_gt[i, :, 0], xy_gt[i, :, 1], '--', color='purple', linewidth=2, alpha=0.5)
+            ax_phase.plot(xy_pred[i, :, 0], xy_pred[i, :, 1], color='grey', linewidth=2)
+            ax_phase.scatter(xy_gt[i, 0, 0], xy_gt[i, 0, 1], color='grey', s=15)
         ax_phase.spines['top'].set_visible(False)
         ax_phase.spines['right'].set_visible(False)
         ax_phase.set_xlim(np.min(xy_gt[:, :, 0]*1.1), np.max(xy_gt[:, :, 0]*1.1))
@@ -164,10 +168,10 @@ def visualize(model, data, iter):
         lrs = np.array(df['lr'])
 
         ax_x_mse.cla()
-        ax_x_mse.plot(x_axis, x_mse_train, label='train', color='r', linewidth=2)
-        ax_x_mse.scatter(x_axis[-1], x_mse_train[-1], color='r', s=25)
-        ax_x_mse.plot(x_axis, x_mse_val, label='val', color='g', linewidth=2)
-        ax_x_mse.scatter(x_axis[-1], x_mse_val[-1], color='g', s=25)
+        ax_x_mse.plot(x_axis, x_mse_train, label='train', color='purple', linewidth=2)
+        ax_x_mse.scatter(x_axis[-1], x_mse_train[-1], color='purple', s=25)
+        ax_x_mse.plot(x_axis, x_mse_val, label='val', color='grey', linewidth=2)
+        ax_x_mse.scatter(x_axis[-1], x_mse_val[-1], color='grey', s=25)
         ax_x_mse.set_title('State MSE')
         ax_x_mse.set_yscale('log')
         ax_x_mse.set_xlabel('Iterations')
@@ -175,10 +179,10 @@ def visualize(model, data, iter):
         ax_x_mse.legend()
 
         ax_y_mse.cla()
-        ax_y_mse.plot(x_axis, y_mse_train, label='train', color='r', linewidth=2)
-        ax_y_mse.scatter(x_axis[-1], y_mse_train[-1], s=25, color='r')
-        ax_y_mse.plot(x_axis, y_mse_val, label='val', color='g', linewidth=2)
-        ax_y_mse.scatter(x_axis[-1], y_mse_val[-1], s=25, color='g')
+        ax_y_mse.plot(x_axis, y_mse_train, label='train', color='purple', linewidth=2)
+        ax_y_mse.scatter(x_axis[-1], y_mse_train[-1], s=25, color='purple')
+        ax_y_mse.plot(x_axis, y_mse_val, label='val', color='grey', linewidth=2)
+        ax_y_mse.scatter(x_axis[-1], y_mse_val[-1], s=25, color='grey')
         ax_y_mse.set_title('Latent MSE')
         ax_y_mse.set_yscale('log')
         ax_y_mse.set_xlabel('Iterations')
@@ -186,20 +190,20 @@ def visualize(model, data, iter):
         ax_y_mse.legend()
 
         ax_x_inf.cla()
-        ax_x_inf.plot(x_axis, x_inf_train, label='train', color='r', linewidth=2)
-        ax_x_inf.scatter(x_axis[-1], x_inf_train[-1], s=25, color='r')
-        ax_x_inf.plot(x_axis, x_inf_val, label='val', color='g', linewidth=2)
-        ax_x_inf.scatter(x_axis[-1], x_inf_val[-1], s=25, color='g')
+        ax_x_inf.plot(x_axis, x_inf_train, label='train', color='purple', linewidth=2)
+        ax_x_inf.scatter(x_axis[-1], x_inf_train[-1], s=25, color='purple')
+        ax_x_inf.plot(x_axis, x_inf_val, label='val', color='grey', linewidth=2)
+        ax_x_inf.scatter(x_axis[-1], x_inf_val[-1], s=25, color='grey')
         ax_x_inf.set_title('Max State Deviation')
         ax_x_inf.set_yscale('log')
         ax_x_inf.set_xlabel('Iterations')
         ax_x_inf.legend()
 
         ax_0_mse.cla()
-        ax_0_mse.plot(x_axis, zero_train, label='train', color='r', linewidth=2)
-        ax_0_mse.scatter(x_axis[-1], zero_train[-1], s=25, color='r')
-        ax_0_mse.plot(x_axis, zero_val, label='val', color='g', linewidth=2)
-        ax_0_mse.scatter(x_axis[-1], zero_val[-1], s=25, color='g')
+        ax_0_mse.plot(x_axis, zero_train, label='train', color='purple', linewidth=2)
+        ax_0_mse.scatter(x_axis[-1], zero_train[-1], s=25, color='purple')
+        ax_0_mse.plot(x_axis, zero_val, label='val', color='grey', linewidth=2)
+        ax_0_mse.scatter(x_axis[-1], zero_val[-1], s=25, color='grey')
         ax_0_mse.set_title('Zero Loss')
         ax_0_mse.set_yscale('log')
         ax_0_mse.set_xlabel('Iterations')
@@ -207,17 +211,17 @@ def visualize(model, data, iter):
         ax_0_mse.set_ylim([np.min(zero_train)+1e-11, None])
 
         ax_reg.cla()
-        ax_reg.plot(x_axis, reg_train, label='train', color='r', linewidth=2)
-        ax_reg.scatter(x_axis[-1], reg_train[-1], s=25, color='r')
-        ax_reg.plot(x_axis, reg_val, label='val', color='g', linewidth=2)
-        ax_reg.scatter(x_axis[-1], reg_val[-1], s=25, color='g')
+        ax_reg.plot(x_axis, reg_train, label='train', color='purple', linewidth=2)
+        ax_reg.scatter(x_axis[-1], reg_train[-1], s=25, color='purple')
+        ax_reg.plot(x_axis, reg_val, label='val', color='grey', linewidth=2)
+        ax_reg.scatter(x_axis[-1], reg_val[-1], s=25, color='grey')
         ax_reg.set_title('Regularization Loss')
         ax_reg.set_yscale('log')
         ax_reg.set_xlabel('Iterations')
         ax_reg.legend()
 
         ax_lr.cla()
-        ax_lr.plot(x_axis, lrs, color='r', linewidth=2)
+        ax_lr.plot(x_axis, lrs, color='purple', linewidth=2)
         ax_lr.set_title('Learning Rate')
         ax_lr.set_xlabel('Iterations')
 
@@ -227,7 +231,7 @@ def visualize(model, data, iter):
         else:
             w, v = LA.eig(kos)
         ax_ko.cla()
-        ax_ko.scatter(np.real(w), np.imag(w), marker='+', color='g', s=30)
+        ax_ko.scatter(np.real(w), np.imag(w), marker='+', color='purple', s=30)
         ax_ko.set_title('Koopman Eigenvalues')
         ax_ko.set_xlabel(r'$\mathcal{R}(\lambda)$')
         ax_ko.set_ylabel(r'$\mathcal{I}(\lambda)$')
@@ -340,7 +344,7 @@ if __name__ == "__main__":
                                                                 config, model)
                         val_metrics_mean.append(val_loss_array)
                         val_loss_mean.append(val_loss.numpy())
-                        
+
                 # average loss components across validation batches
                 train_metrics_mean = np.mean(np.array(train_metrics_mean), axis=0)
                 val_metrics_mean = np.mean(np.array(val_metrics_mean), axis=0)
@@ -355,7 +359,8 @@ if __name__ == "__main__":
                     visualize(model, [batch_val, batch_val_u], epoch)
 
                 # update progress bar
-                desc = "loss: {:.4f}/{:.4f}, state_mse: {:.4f}/{:.4f}".format(
+                desc = "epoch: {}, loss: {:.4f}/{:.4f}, state_mse: {:.4f}/{:.4f}".format(
+                                                        epoch,
                                                         train_loss_mean,
                                                         val_loss.numpy(),
                                                         train_metrics_mean[0],
@@ -366,5 +371,5 @@ if __name__ == "__main__":
 
         if  config.get("mode")=="floyd":
             print_metrics(train_metrics_mean, val_metrics_mean, epoch, lr)
-
+        print(epoch)
         lr_scheduler.step()

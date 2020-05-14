@@ -3,6 +3,7 @@ from pathlib import Path
 import json
 import torch
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 from tqdm import tqdm
 
 
@@ -75,6 +76,8 @@ def plot_mse_mad(models, model_labels, x_true, n_shifts, t_end):
     mqts = np.array(mqts)
 
     plt.rcParams.update({'font.size': 15})
+    mpl.rcParams['axes.prop_cycle'] = mpl.cycler(color=["grey", "purple", "k", "m", "orange"])
+
 
     fig, ax = plt.subplots(1, 2, figsize=(12, 4), dpi=100, facecolor='white')
     for idx, label in enumerate(model_labels):
