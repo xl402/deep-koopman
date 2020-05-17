@@ -2,7 +2,6 @@
 *CUED IIB Master's Project*
 
 *Author: Tom Lu*
-
 *Supervisor: Guillaume Hennequin*
 
 ## Introduction: 
