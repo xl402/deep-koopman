@@ -39,11 +39,11 @@ def get_errors(model, x_true, n_shifts):
     return x, mse, mad, qt
 
 
-def load_models(network, root_path, model_names):
+def load_models(networks, root_path, model_names):
     """
     Load a list of models (for experiment evaluations)
     Args:
-        network: network class, can be DENIS or LREN
+        network: list network classes, can be DENIS or LREN
         root_path: (str) model root directory
         model_names: (lst) list of names
     Returns:
@@ -52,13 +52,13 @@ def load_models(network, root_path, model_names):
     """
     models = []
     model_configs = []
-    for name in model_names:
+    for i, name in enumerate(model_names):
         model_path = Path(root_path, "{}.pt".format(name))
         model_config_path = Path(root_path, "{}.json".format(name))
         with open(model_config_path) as f:
             model_config = json.load(f)
         model_configs.append(model_config)
-        model = network(model_config)
+        model = networks[i](model_config)
         model.load_state_dict(torch.load(model_path))
         models.append(model)
     return models, model_configs
@@ -76,7 +76,7 @@ def plot_mse_mad(models, model_labels, x_true, n_shifts, t_end):
     mqts = np.array(mqts)
 
     plt.rcParams.update({'font.size': 15})
-    mpl.rcParams['axes.prop_cycle'] = mpl.cycler(color=["grey", "purple", "k", "m", "orange"])
+    mpl.rcParams['axes.prop_cycle'] = mpl.cycler(color=["grey", "purple", "k", "orange", "red"])
 
 
     fig, ax = plt.subplots(1, 2, figsize=(12, 4), dpi=100, facecolor='white')
@@ -87,7 +87,6 @@ def plot_mse_mad(models, model_labels, x_true, n_shifts, t_end):
                    color=p[0].get_color(), linewidth=2)
 
         ax[0].set_ylabel(r'MSE')
-
 
         p = ax[1].errorbar(x[:n_shifts], mads[idx, :n_shifts],
                    yerr=mqts[idx, :, :n_shifts], errorevery=len(x)//5,
@@ -104,8 +103,12 @@ def plot_mse_mad(models, model_labels, x_true, n_shifts, t_end):
         ax[i].set_xlim([1, t_end])
 
         ax[i].set_yscale('log')
+    if np.max(mses) > 10**13:
+        ax[0].set_ylim([None, 10**6])
+    if np.max(mads) > 10**3:
+        ax[1].set_ylim([None, 10**3])
 
-    ax[0].legend()
+    ax[0].legend(loc=4)
     fig.tight_layout()
     plt.subplots_adjust(top=0.9, wspace=0.3)
     plt.show()
@@ -128,28 +131,29 @@ def plot_trajectories(model, n_shifts, x_true, setlim=None):
     t_end = x_true.shape[1]
 
     time = np.arange(0, t_end, 1)
-
+    for i in range(3):
+        ax[i].axis('off')
     for i in range(5):
-        ax[2].plot(x_pred[i, :n_shifts, 0], x_pred[i, :n_shifts, 1], color='g', linewidth=lw)
-        ax[2].plot(x_pred[i, n_shifts:t_end, 0], x_pred[i, n_shifts:t_end, 1], '--', color='g', linewidth=lw)
-        ax[2].plot(x_true[i, :t_end, 0], x_true[i, :t_end, 1], '--', alpha=0.5, color='r', linewidth=lw)
-        ax[2].scatter(x_pred[i, 0, 0], x_pred[i, 0, 1], color='g', s=50)
+        ax[2].plot(x_pred[i, :n_shifts, 0], x_pred[i, :n_shifts, 1], color='purple', linewidth=lw)
+        ax[2].plot(x_pred[i, n_shifts:t_end, 0], x_pred[i, n_shifts:t_end, 1], '--', color='purple', linewidth=lw)
+        ax[2].plot(x_true[i, :t_end, 0], x_true[i, :t_end, 1], '--', alpha=0.5, color='grey', linewidth=lw)
+        ax[2].scatter(x_pred[i, 0, 0], x_pred[i, 0, 1], color='purple', s=50)
         ax[2].set_xlabel(r'$\theta$')
         ax[2].set_ylabel(r'$\omega$')
         ax[2].set_title(r'Phase Portrait', pad=20)
 
     for i in range(5):
-        ax[0].plot(time[:n_shifts], x_pred[i, :n_shifts, 0], color='g', linewidth=lw)
-        ax[0].plot(time[n_shifts:], x_pred[i, n_shifts:t_end, 0], '--', color='g', linewidth=lw)
-        ax[0].plot(time, x_true[i, :t_end, 0], '--', alpha=0.5, color='r', linewidth=lw)
+        ax[0].plot(time[:n_shifts], x_pred[i, :n_shifts, 0], color='purple', linewidth=lw)
+        ax[0].plot(time[n_shifts:], x_pred[i, n_shifts:t_end, 0], '--', color='purple', linewidth=lw)
+        ax[0].plot(time, x_true[i, :t_end, 0], '--', alpha=0.5, color='grey', linewidth=lw)
         ax[0].set_xlabel(r'$k$')
         ax[0].set_ylabel(r'$\theta$')
         ax[0].set_title(r'$\theta$ Trajectory', pad=20)
 
     for i in range(5):
-        ax[1].plot(time[:n_shifts], x_pred[i, :n_shifts, 1], color='g', linewidth=lw)
-        ax[1].plot(time[n_shifts:], x_pred[i, n_shifts:t_end, 1], '--', color='g', linewidth=lw)
-        ax[1].plot(time, x_true[i, :t_end, 1], '--', alpha=0.5, color='r', linewidth=lw)
+        ax[1].plot(time[:n_shifts], x_pred[i, :n_shifts, 1], color='purple', linewidth=lw)
+        ax[1].plot(time[n_shifts:], x_pred[i, n_shifts:t_end, 1], '--', color='purple', linewidth=lw)
+        ax[1].plot(time, x_true[i, :t_end, 1], '--', alpha=0.5, color='grey', linewidth=lw)
         ax[1].set_xlabel(r'$k$')
         ax[1].set_ylabel(r'$\omega$')
         ax[1].set_title(r'$\omega$ Trajectory', pad=20)

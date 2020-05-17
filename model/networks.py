@@ -140,6 +140,18 @@ class LREN(nn.Module):
             return x_pred, koopman
         return x_pred
 
+    def encode(self, x):
+        isTensor = torch.is_tensor(x)
+        if not isTensor:
+            x = torch.tensor(x, dtype=torch.float32)
+        # Generate latent ground truth
+        x = x[:, :self.params['n_shifts'], :]
+        y = self.encoder(x)
+        y = torch.cat((x, y), dim=-1)
+        if not isTensor:
+            return y.detach().numpy()
+        return y
+
 
 class DENIS(nn.Module):
     """

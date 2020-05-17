@@ -40,7 +40,7 @@ def kooc_eval(model, init_conds, x_goal, T, Qs, r=1):
         x_kooc, u_kooc, t, t_kooc = kooc.simulate(init_conds, x_goal,
                                                   T, Q, r, show=False)
         x_costs = [get_x_cost(x, x_goal, t) for x in x_kooc]
-        u_costs = [get_u_cost(u, t) for u in zip(u_kooc, t_kooc)]
+        u_costs = [get_u_cost(u, t) for u, t in zip(u_kooc, t_kooc)]
         x_cost_m.append(np.median(x_costs))
         u_cost_m.append(np.median(u_costs))
     return np.array(x_cost_m), np.array(u_cost_m)

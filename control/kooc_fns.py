@@ -11,7 +11,7 @@ def pend_dynamics(model):
         x0 = x0.reshape((1, 1, 2))
         x_goal = x_goal.reshape((1, 1, 2))
         y = model.encode(x0-x_goal)[0].T
-        
+
         u = (K@y)[0, 0]
         us.append(u)
         ts.append(t)
@@ -61,7 +61,7 @@ class KOOC():
         sys = harold.undiscretize(G, 'tustin')
         A_c = sys.a
         return A_c, B_hat
-    
+
 
     def simulate(self, init_conds, x_goal, T, Q=1, r=1, show=True):
         """Simulate closed loop dynamics
@@ -80,18 +80,23 @@ class KOOC():
         x_goal = np.array(x_goal)
         results = self.model.predict(init_conds, 1, return_ko=True)
         kos = results[-1]
+        #import pdb; pdb.set_trace()
         dim = init_conds.shape[-1]
-        us = []
-        ts = []
-        traj = []
+        us, ts, traj = [], [], []
         if show:
             p_bar = tqdm(range(len(init_conds)))
         else:
             p_bar = range(len(init_conds))
         for i in p_bar:
             x0 = init_conds[i]
-            ko = kos[i]
-            A = ko.T
+            if len(kos.shape) == 3:
+                ko = kos[i]
+            else:
+                ko = kos
+            if len(kos.shape) == 3:
+                A = ko.T
+            else:
+                A = ko
             A_c, B_hat = self.d2c(dim, A)
             if np.isscalar(Q):
                 Q = Q * np.eye(dim)
@@ -101,10 +106,10 @@ class KOOC():
             Q_hat[:dim, :dim] = Q
             K, _, _ = lqr(A_c, B_hat, Q_hat, r)
             t = np.arange(0, T*self.dt, self.dt)
-            u = []
-            _t = []
+            u, _t = [], []
             sol = odeint(self.dynamics, init_conds[i, 0], t,
                          args=(K, x_goal, u, _t))
+
             us.append(u)
             ts.append(_t)
             traj.append(sol)
