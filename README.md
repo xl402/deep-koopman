@@ -1,5 +1,9 @@
-# Deep Koopman
-*CUED IIB Master's Thesis Project*
+# Deep Learning for Koopman Operator Optimal Control
+*CUED IIB Master's Project*
+
+*Author: Tom Lu*
+
+*Supervisor: Guillaume Hennequin*
 
 ## Introduction: 
 The Koopman operator framework is becoming increasingly popular for obtaining linear representations of nonlinear systems from data. This project aims to **optimally control input non-affine nonlinear systems**, utilizing Deep Learning (DL) to discover the Koopman invariant subspace, bridging the gap between **DL based Koopman eigenfunction discovery and optimal predictive control.**
