@@ -38,7 +38,7 @@ Left: Predicted trajectories overlaying ground truth. Right: Top two Koopman eig
 ![Pendulum2](https://i.imgur.com/j83vGxn.gif)
 
 ## Training
-To train the network, first configure a training json file inside `training\configs`. Then inside `training` directory, open terminal:
+Requires *pytorch*, *python 3*, *numpy* and *matplotlib*. To train the network, first configure a training json file inside `training\configs`. Then inside `training` directory, open terminal:
 
 `python trainer.py --config_dir PATH_TO_CONFIG --viz`
 
