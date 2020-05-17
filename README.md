@@ -31,8 +31,11 @@ Left: Predicted trajectories overlaying ground truth. Right: Top two Koopman eig
 
 ![Pendulum2](https://i.imgur.com/j83vGxn.gif)
 
-## Fluid Flow Example
-Left: Predicted trajectories overlaying ground truth. Right: Top Koopman eigenfunction magnitude and phase plot.
+## Training
+To train the network, first configure a training json file inside `training\configs`. Then inside `training` directory, open terminal:
 
-<img src="https://i.imgur.com/5MuBOFo.gif" width="280"/> <img src="https://i.imgur.com/Y35ktWl.gif" width="570"/> 
+`python trainer.py --config_dir PATH_TO_CONFIG --viz`
+
+This should locally initialize a model, trained with data specified in the configuration file.
+
 
