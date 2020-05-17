@@ -5,7 +5,7 @@
 The Koopman operator framework is becoming increasingly popular for obtaining linear representations of nonlinear systems from data. This project aims to **optimally control input non-affine nonlinear systems**, utilizing Deep Learning (DL) to discover the Koopman invariant subspace, bridging the gap between **DL based Koopman eigenfunction discovery and optimal predictive control.**
 
 ## Networks Overview:
-Script `models/networks.py` contains all networks discussed in the thesis, including:
+Script `model/networks.py` contains all networks discussed in the thesis, including:
 
 **LREN** : **L**inearly **R**ecurrent **E**ncoder **N**etwork
 
@@ -17,6 +17,8 @@ Script `models/networks.py` contains all networks discussed in the thesis, inclu
 |               **LREN**               |               **DENIS**              |               **DEINA**              |
 |:------------------------------------:|:------------------------------------:|:------------------------------------:|
 | ![](https://i.imgur.com/zk0sbWV.png) | ![](https://i.imgur.com/dTgpnbo.png) | ![](https://i.imgur.com/4lvGkWC.png) |
+
+Complete thesis and presentations and figures may be found in `reports` directory.
 
 ## Koopman Operator Optimal Control
 By lifting system state dimensions, system dynamics become globally linear, where LQR is readily applied. This technique is compared against the iterative LQR (iLQR). Video below shows our models controlling a pendulum it its vertical upright position.
