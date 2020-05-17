@@ -13,6 +13,10 @@ Script `models/networks.py` contains all networks discussed in the thesis, inclu
 ## Koopman Operator Optimal Control
 By lifting system state dimensions, system dynamics become globally linear, where LQR is readily applied. This technique is compared against the iterative LQR (iLQR). Video below shows our models controlling a pendulum it its vertical upright position.
 
+Solarized dark             |  Solarized Ocean
+:-------------------------:|:-------------------------:
+![](https://i.imgur.com/cEslwIS.gif)  |  ![](https://i.imgur.com/c0X2hVD.gif)
+
 <img src="https://i.imgur.com/cEslwIS.gif" width="500"/>
 
 We also investigate the effect of lifted state dimension:
