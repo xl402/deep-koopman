@@ -72,7 +72,7 @@ def animate(labels, fn, *args, interval=50):
     fig, ax = plt.subplots(4, 4, figsize=(20, 20), facecolor='w')
     plt.rcParams['font.size'] = 15
     t = args[0].shape[1]
-    colors = ['k', 'r', 'b', 'c','g']
+    colors = ['r', 'k', 'purple', 'c','g']
 
     for i in range(4):
         for j in range(4):
@@ -96,6 +96,8 @@ def animate(labels, fn, *args, interval=50):
                     if idx==15 and k==t-1:
                         lines.append(ln)
             ax[i, j].set_aspect('equal', 'datalim')
+            ax[i, j].set_xlim([-1, 1])
+            ax[i, j].set_ylim([-1, 1])
     plt.figlegend(lines, labels, loc = 'upper left', labelspacing=0. , fontsize=30)
     ani = animation.ArtistAnimation(fig, lns, interval=interval, repeat=True)
     ani.save(fn+'.mp4',writer='ffmpeg')
