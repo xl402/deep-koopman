@@ -27,7 +27,7 @@ Complete thesis and presentations and figures may be found in `reports` director
 ## Koopman Operator Optimal Control
 By lifting system state dimensions, system dynamics become globally linear, where LQR is readily applied. This technique is compared against the iterative LQR (iLQR). Video below shows our models controlling a pendulum it its vertical upright position.
 
-**Ours VS. iLQR**            |  **Effect of Latent Size**
+**Ours VS. iLQR**            |  **Effect of Latent Size (DENIS)**
 :-------------------------:|:-------------------------:
 ![](https://i.imgur.com/cEslwIS.gif)  |  ![](https://i.imgur.com/c0X2hVD.gif)
 
