@@ -15,7 +15,7 @@ Script `models/networks.py` contains all networks discussed in the thesis, inclu
 By lifting system state dimensions, system dynamics become globally linear, where LQR is readily applied. This technique is compared against the iterative LQR (iLQR). Video below shows our models controlling a pendulum it its vertical upright position.
 |           | Full name                                                        | Koopman Equivalent | Architecture                         |
 |-----------|------------------------------------------------------------------|--------------------|--------------------------------------|
-| **LREN**  | **L**inearly **R**ecurrent **E**ncoder **N**etwork               |                    | ![](https://i.imgur.com/zk0sbWV.png | width=100) |
+| **LREN**  | **L**inearly **R**ecurrent **E**ncoder **N**etwork               |                    | ![](https://i.imgur.com/zk0sbWV.png) |
 | **DENIS** | **D**eep **E**ncoder with **I**nitial **S**tate Parameterisation |                    | ![](https://i.imgur.com/dTgpnbo.png) |
 | **DEINA** | **D**eep **E**ncoder for **I**nput **N**on-**A**ffine systems    |                    | ![](https://i.imgur.com/4lvGkWC.png) |
 
