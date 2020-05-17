@@ -10,9 +10,8 @@ Script `models/networks.py` contains all networks discussed in the thesis, inclu
 **DENIS**: **D**eep **E**ncoder with **I**nitial **S**tate Parameterisation
 **DEINA**: **D**eep **E**ncoder for **I**nput **N**on-**A**ffine systems
  
- | | 
-:-------------------------:|:-------------------------:|:-------------------------:
-![](https://i.imgur.com/zk0sbWV.png)  |  ![](https://i.imgur.com/dTgpnbo.png)|  ![](https://i.imgur.com/4lvGkWC.png)
+ | ![](https://i.imgur.com/zk0sbWV.png) | ![](https://i.imgur.com/dTgpnbo.png) | ![](https://i.imgur.com/4lvGkWC.png) |
+|--------------------------------------|--------------------------------------|--------------------------------------|
 
 ## Koopman Operator Optimal Control
 By lifting system state dimensions, system dynamics become globally linear, where LQR is readily applied. This technique is compared against the iterative LQR (iLQR). Video below shows our models controlling a pendulum it its vertical upright position.
