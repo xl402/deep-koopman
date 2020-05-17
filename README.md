@@ -17,10 +17,10 @@ Script `model/networks.py` contains all networks discussed in the thesis, includ
 
 **DEINA**: **D**eep **E**ncoder for **I**nput **N**on-**A**ffine systems
 
- 
+
 |               **LREN**               |               **DENIS**              |               **DEINA**              |
 |:------------------------------------:|:------------------------------------:|:------------------------------------:|
-| ![](https://i.imgur.com/zk0sbWV.png) | ![](https://i.imgur.com/dTgpnbo.png) | ![](https://i.imgur.com/4lvGkWC.png) |
+| ![](https://i.imgur.com/zk0sbWV.png) | ![](https://i.imgur.com/dTgpnbo.png) | ![](https://i.imgur.com/lQyS2tt.png) |
 
 Complete thesis and presentations and figures may be found in `reports` directory.
 
