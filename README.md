@@ -11,9 +11,13 @@ Script `models/networks.py` contains all networks discussed in the thesis, inclu
 - **DEINA**: **D**eep **E**ncoder for **I**nput **N**on-**A**ffine systems
 
 ## Koopman Operator Optimal Control
-By lifting system state timensions, system dynamics become globally linear, where LQR is readily applied. This technique is compared against iterative local linearization approach, i.e. Iterative LQR (iLQR). Hamiltonian energy increases from top left to bottom right.
+By lifting system state dimensions, system dynamics become globally linear, where LQR is readily applied. This technique is compared against the iterative LQR (iLQR). Video below shows our models controlling a pendulum it its vertical upright position.
 
 <img src="https://i.imgur.com/cEslwIS.gif" width="700"/>
+
+We also investigate the effect of lifted state dimension:
+
+<img src="https://i.imgur.com/dragiZV.gif" width="700"/>
 
 ## Pendulum Example
 Left: Predicted trajectories overlaying ground truth. Right: Top two Koopman eigenfunctions magnitudes (which together, convey the Hamiltonian energy of the system).
