@@ -1,5 +1,5 @@
 # Deep Learning for Koopman Operator Optimal Control
-*CUED IIB Master's Project*
+*CUED IIB MEng Thesis*
 
 *Author: Tom Lu*   
 
