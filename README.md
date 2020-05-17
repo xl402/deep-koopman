@@ -9,7 +9,8 @@ Script `models/networks.py` contains all networks discussed in the thesis, inclu
 **LREN** : **L**inearly **R**ecurrent **E**ncoder **N**etwork
 **DENIS**: **D**eep **E**ncoder with **I**nitial **S**tate Parameterisation
 **DEINA**: **D**eep **E**ncoder for **I**nput **N**on-**A**ffine systems
-
+ 
+ | | 
 :-------------------------:|:-------------------------:|:-------------------------:
 ![](https://i.imgur.com/zk0sbWV.png)  |  ![](https://i.imgur.com/dTgpnbo.png)|  ![](https://i.imgur.com/4lvGkWC.png)
 
