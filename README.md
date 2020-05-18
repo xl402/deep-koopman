@@ -21,7 +21,7 @@ Script `model/networks.py` contains all networks discussed in the thesis, includ
 
 |               **LREN**               |               **DENIS**              |               **DEINA**              |
 |:------------------------------------:|:------------------------------------:|:------------------------------------:|
-| <img src="https://i.imgur.com/PMkfPyi.png" height="80"> | <img src="https://i.imgur.com/dTgpnbo.png" height="80"> | <img src="https://i.imgur.com/lQyS2tt.png" height="80">|
+| <img src="https://i.imgur.com/PMkfPyi.png" height="150"> | <img src="https://i.imgur.com/dTgpnbo.png" height="150"> | <img src="https://i.imgur.com/lQyS2tt.png" height="150">|
 
 Complete thesis and presentations and figures may be found in `reports` directory.
 
